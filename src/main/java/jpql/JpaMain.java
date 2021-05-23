@@ -14,19 +14,21 @@ public class JpaMain {
 
         try {
 
-            for(int i=0; i<100; i++) {
-                Member member = new Member();
-                member.setUsername("member"+i);
-                member.setAge(i);
-                em.persist(member);
-            }
+            Team team = new Team();
+            team.setName("team");
+            em.persist(team);
+
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setAge(11);
+            member.changeTeam(team);
+            em.persist(member);
 
             em.flush();
             em.clear();
 
-            List<Member> result = em.createQuery("select m from Member m order by m.age desc", Member.class)
-                    .setFirstResult(1) // 1번부터 시작
-                    .setMaxResults(10) // 한페이지에 10개씩
+            String query = "select m from Member m inner join m.team t on t.name = 'team1'";
+            List<Member> result = em.createQuery(query, Member.class)
                     .getResultList();
 
             System.out.println("result.size() = " + result.size());
