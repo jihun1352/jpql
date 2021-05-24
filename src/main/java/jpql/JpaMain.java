@@ -1,6 +1,7 @@
 package jpql;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.List;
 
 public class JpaMain {
@@ -24,16 +25,24 @@ public class JpaMain {
             member.changeTeam(team);
             em.persist(member);
 
+            Member member2 = new Member();
+            member2.setUsername("member2");
+            member2.setAge(22);
+            member2.changeTeam(team);
+            em.persist(member2);
+
             em.flush();
             em.clear();
 
-            String query = "select m from Member m inner join m.team t on t.name = 'team1'";
-            List<Member> result = em.createQuery(query, Member.class)
+            String query = "select m.username, 'HELLO', true from Member m";
+            List<Object[]> result = em.createQuery(query)
                     .getResultList();
 
-            System.out.println("result.size() = " + result.size());
-            for (Member member1 : result) {
-                System.out.println("member1.getUsername() = " + member1.getUsername());
+            System.out.println("@@ "+ result.toString());
+            for (Object[] objects : result) {
+                System.out.println("objects = "+objects[0]);
+                System.out.println("objects = "+objects[1]);
+                System.out.println("objects = "+objects[2]);
             }
 
             tx.commit();
