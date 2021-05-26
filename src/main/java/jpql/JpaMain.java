@@ -34,17 +34,16 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select m.username, 'HELLO', true from Member m";
-            List<Object[]> result = em.createQuery(query)
+            String query = "select nullif(m.username, 'member1') " +
+                    "from Member m";
+
+            List<String> result = em.createQuery(query, String.class)
                     .getResultList();
 
-            System.out.println("@@ "+ result.toString());
-            for (Object[] objects : result) {
-                System.out.println("objects = "+objects[0]);
-                System.out.println("objects = "+objects[1]);
-                System.out.println("objects = "+objects[2]);
+            for (String s : result) {
+                System.out.println("s = " + s);
             }
-
+            
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
