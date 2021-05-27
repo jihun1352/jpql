@@ -34,13 +34,12 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select nullif(m.username, 'member1') " +
-                    "from Member m";
+            String query = "select locate('de', 'abcdefg') from Member m";
 
-            List<String> result = em.createQuery(query, String.class)
+            List<Integer> result = em.createQuery(query, Integer.class)
                     .getResultList();
 
-            for (String s : result) {
+            for (Integer s : result) {
                 System.out.println("s = " + s);
             }
             
