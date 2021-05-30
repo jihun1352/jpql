@@ -50,7 +50,7 @@ public class JpaMain {
                 //회원2, 팀A(1차캐시)  why? 위에서 같은 팀A를 이미 호출해서 캐시에 담겨있음
                 //회원3, 팀B(SQL)
             }
-            
+
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
