@@ -15,33 +15,40 @@ public class JpaMain {
 
         try {
 
-            Team team = new Team();
-            team.setName("team");
-            em.persist(team);
+            Team teamA = new Team();
+            teamA.setName("팀A");
+            em.persist(teamA);
+            Team teamB = new Team();
+            teamB.setName("팀B");
+            em.persist(teamB);
 
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setAge(11);
-            member.changeTeam(team);
-            em.persist(member);
+            Member member1 = new Member();
+            member1.setUsername("회원1");
+            member1.changeTeam(teamA);
+            em.persist(member1);
 
             Member member2 = new Member();
-            member2.setUsername("member2");
-            member2.setAge(22);
-            member2.changeTeam(team);
+            member2.setUsername("회원2");
+            member2.changeTeam(teamA);
             em.persist(member2);
+
+            Member member3 = new Member();
+            member3.setUsername("회원3");
+            member3.changeTeam(teamB);
+            em.persist(member3);
 
             em.flush();
             em.clear();
 
-            String query = "select nullif(m.username, 'member1') " +
-                    "from Member m";
+            String query = "select m from Member m join fetch m.team t";
 
-            List<String> result = em.createQuery(query, String.class)
+            List<Member> result = em.createQuery(query, Member.class)
                     .getResultList();
-
-            for (String s : result) {
-                System.out.println("s = " + s);
+            for (Member member : result) {
+                System.out.println("member = " + member.getUsername() + ", "+ member.getTeam().getName());
+                //회원1, 팀A(SQL)
+                //회원2, 팀A(1차캐시)  why? 위에서 같은 팀A를 이미 호출해서 캐시에 담겨있음
+                //회원3, 팀B(SQL)
             }
             
             tx.commit();
