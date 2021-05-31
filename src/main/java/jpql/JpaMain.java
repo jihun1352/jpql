@@ -37,20 +37,22 @@ public class JpaMain {
             member3.changeTeam(teamB);
             em.persist(member3);
 
-            em.flush();
+            //em.flush();
+            //em.clear();
+
+            //FLUSH가 실행 된다.
+            int resultCount = em.createQuery("update Member m set m.age = 20")
+                    .executeUpdate();
+            // 위에서 벌크연산 후 영속성 컨텍스트를 초기화 해줌으로써
+            // 아래의 em.find()는 DB에서 데이터를 가져온다.
             em.clear();
 
-            String query = "select m from Member m join fetch m.team t";
+            System.out.println("resultCount = " + resultCount);
+            // DB에서 업데이트된 정보를 가져오는 것이 아니라 영속성 컨텍스트에 있는 기존 age값을 가져온다
+            Member findMember = em.find(Member.class, member1.getId());
 
-            List<Member> result = em.createQuery(query, Member.class)
-                    .getResultList();
-            for (Member member : result) {
-                System.out.println("member = " + member.getUsername() + ", "+ member.getTeam().getName());
-                //회원1, 팀A(SQL)
-                //회원2, 팀A(1차캐시)  why? 위에서 같은 팀A를 이미 호출해서 캐시에 담겨있음
-                //회원3, 팀B(SQL)
-            }
-
+            System.out.println("findMember = " + findMember.getAge());
+            
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
